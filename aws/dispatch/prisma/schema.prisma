@@ -1,0 +1,149 @@
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  CITIZEN
+  OPERATOR
+  RESCUER
+  ADMIN
+}
+
+enum RequestStatus {
+  PENDING
+  PROCESSING
+  ASSIGNED
+  IN_PROGRESS
+  RESCUED
+  CANCELLED
+}
+
+enum Urgency {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum ResourceType {
+  BOAT
+  AMBULANCE
+  RESCUE_KIT
+  FOOD_SUPPLY
+  MEDICAL_KIT
+}
+
+enum ResourceStatus {
+  AVAILABLE
+  DEPLOYED
+  MAINTENANCE
+}
+
+enum TeamStatus {
+  AVAILABLE
+  DEPLOYED
+  OFFLINE
+}
+
+
+model User {
+  id           Int      @id @default(autoincrement())
+  name         String
+  email        String   @unique
+  passwordHash String
+  phone        String?
+  role         UserRole @default(CITIZEN)
+
+  // Relationships
+  requests    RescueRequest[] @relation("CitizenRequests")
+  deployments Deployment[]    @relation("AssignedBy")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model RescueRequest {
+  id Int @id @default(autoincrement())
+
+  // Citizen-submitted information
+  name           String
+  pin            String
+  latitude       Float
+  longitude      Float
+  emergencyType  String[]
+  peopleAffected Int
+  description    String
+
+  // System-managed information
+  status  RequestStatus @default(PENDING)
+  urgency Urgency       @default(MEDIUM)
+
+  // Foreign keys
+  citizenId Int
+  rescuerId Int?
+
+  // Relationships
+  citizen User     @relation("CitizenRequests", fields: [citizenId], references: [id])
+  rescuer Rescuer? @relation("AssignedRescuer", fields: [rescuerId], references: [id])
+
+  deployments Deployment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Rescuer {
+  id            Int        @id @default(autoincrement())
+  name          String
+  contactNumber String
+  membersCount  Int
+  latitude      Float?
+  longitude     Float?
+  status        TeamStatus @default(AVAILABLE)
+
+  // Relationships
+  assignedRequests RescueRequest[] @relation("AssignedRescuer")
+  deployments      Deployment[]
+
+  createdAt DateTime @default(now())
+}
+
+model Resource {
+  id        Int            @id @default(autoincrement())
+  name      String
+  type      ResourceType
+  quantity  Int
+  available Int
+  status    ResourceStatus @default(AVAILABLE)
+
+  deployments Deployment[]
+
+  createdAt DateTime @default(now())
+}
+
+model Deployment {
+  id Int @id @default(autoincrement())
+
+  // Foreign keys
+  requestId    Int
+  rescuerId    Int
+  resourceId   Int
+  assignedById Int?
+
+  // Relationships
+  request    RescueRequest @relation(fields: [requestId], references: [id])
+  rescuer    Rescuer       @relation(fields: [rescuerId], references: [id])
+  resource   Resource      @relation(fields: [resourceId], references: [id])
+  assignedBy User?         @relation("AssignedBy", fields: [assignedById], references: [id])
+
+  quantityUsed Int       @default(1)
+  notes        String?
+  deployedAt   DateTime  @default(now())
+  completedAt  DateTime?
+}
