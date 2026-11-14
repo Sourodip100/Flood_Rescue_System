@@ -1,9 +1,22 @@
 import {NextResponse} from "next/server";
 import prisma from "@/lib/db";
 
-export async function GET() {
+export async function GET(request) {
     try {
-        const id = 1;
+        const user = getUser(request);
+        if (!user) {
+            return NextResponse.json(
+                { error: "Unauthorized" },
+                { status: 401 }
+            );
+        }
+        if (user.role !== "Rescuer") {
+            return NextResponse.json(
+                { error: "Only rescuers can view pending tasks" },
+                { status: 403 }
+            );
+        }
+        const id = user.userId;
         const tasks = await prisma.RescueRequest.findMany({
             where : {
                 rescuerId: id,
@@ -38,6 +51,19 @@ export async function GET() {
 
 export async function PATCH(request) {
     try {
+        const user = getUser(request);
+        if (!user) {
+            return NextResponse.json(
+                { error: "Unauthorized" },
+                { status: 401 }
+            );
+        }
+        if (user.role !== "Rescuer") {
+            return NextResponse.json(
+                { error: "Only rescuers can view pending tasks" },
+                { status: 403 }
+            );
+        }
         const {id,status} = await request.json();
         const update = await prisma.RescueRequest.update({
             where: {

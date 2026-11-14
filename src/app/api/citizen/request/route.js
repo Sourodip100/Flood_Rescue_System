@@ -1,8 +1,23 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
+import {setUser, getUser} from "@/middlewares/jwtAuth";
+
 export async function POST(request) {
     try {
         const body = await request.json();
+        const user = getUser(request);
+        if (!user) {
+            return NextResponse.json(
+                { error: "Unauthorized" },
+                { status: 401 }
+            );
+        }
+        if (user.role !== "Citizen") {
+            return NextResponse.json(
+                { error: "Only citizens can create rescue requests" },
+                { status: 403 }
+            );
+        }
         const newRequest = await prisma.rescueRequest.create({
             data: {
                 name: body.name,
@@ -12,7 +27,7 @@ export async function POST(request) {
                 emergencyType: body.emergencyType,
                 peopleAffected: Number(body.peopleAffected),
                 description: body.description,
-                citizenId: 1
+                citizenId: user.userId
             }
         });
         return NextResponse.json({

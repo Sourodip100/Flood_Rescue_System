@@ -214,7 +214,6 @@ import prisma from "@/lib/db";
 
 export const runtime = "nodejs";
 
-// Authenticate AWS Lambda
 function verifySecret(request) {
     const authorization = request.headers.get("authorization");
     const expectedSecret = process.env.DISPATCH_SECRET;

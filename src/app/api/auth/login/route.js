@@ -1,16 +1,30 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
-import { signJWT } from "jose";
-import bcrypt from "bcryptjs"; 
+import bcrypt from "bcryptjs";
+import {setUser, getUser} from "@/middlewares/jwtAuth";
 
-export default async function POST(request) {
+export async function POST(request) {
     try {
-
-        const {email, password} = await request.json();
-        
-        const user = await prisma.user.findUnique({
-            where: {email:email}
-        });
+        const {email, password, role} = await request.json();
+        let user = null;
+        if (role === "Citizen"){
+            user = await prisma.user.findUnique({
+                where: {email:email}
+            });
+        }
+        else if (role === "Rescuer") {
+            user = await prisma.rescuer.findUnique({
+                where: {email:email}
+            });
+        } 
+        else if (role === "Operator") {
+            user = await prisma.operator.findUnique({
+                where: {email:email}
+            });
+        }
+        else {
+            return NextResponse.json({error: "Unauthorized role"}, {status: 404});
+        }
         if (!user){
             return NextResponse.json({error: "User not found"}, {status: 404});
         }
@@ -19,14 +33,13 @@ export default async function POST(request) {
             return NextResponse.json({error: "Invalid password"}, {status: 401});
         }
 
-        const token = await new signJWT({userId: user.id, role: user.role}).setProtectedHeader({alg: "HS256"}).setExpirationTime("1h").sign(new TextEncoder().encode(process.env.JWT_SECRET));
-
+        
         const res = NextResponse.json({message: "Login successful"});
-        res.cookies.set("token", token, {httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "strict", path: "/"});
+        setUser(user.id, role, res);
         return res;
     }
     catch (error) {
-        return NextResponse.json({error: "Internal server error"}, {status: 500});
+        return NextResponse.json({error: error + "Internal server error"}, {status: 500});
     }
 }
 
