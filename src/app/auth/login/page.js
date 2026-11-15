@@ -10,33 +10,39 @@ export default function Login(){
     
     async function formAction(e){
         e.preventDefault();
-        const request = await fetch("/api/auth/login", {
-            method: "POST",
-            headers: {
-                "content-type": "application/json"
-            },
-            body: JSON.stringify({
-                email:mail,
-                password:pass,
-                role:role
-            })
-        });
-        const response = await request.json();
-        if (response.error) {
-            console.error(response.error);
-            alert("Error: " + response.error);
-        } else {
-            console.log(response.message);
-            alert("Success: " + response.message);
-            if (role === "Rescuer") {
-                router.push("/rescuer");
+        try {
+            const request = await fetch("/api/auth/login", {
+                method: "POST",
+                headers: {
+                    "content-type": "application/json"
+                },
+                body: JSON.stringify({
+                    email:mail,
+                    password:pass,
+                    role:role
+                })
+            });
+            const response = await request.json();
+            if (response.error) {
+                console.log(response.error);
+                alert("Error: " + response.error);
+            } else {
+                console.log(response.message);
+                alert("Success: " + response.message);
+                if (role === "Rescuer") {
+                    router.push("/rescuer");
+                }
+                else if (role === "Operator") {
+                    router.push("/operator");
+                }
+                else {
+                    router.push("/citizen");
+                }
             }
-            else if (role === "Operator") {
-                router.push("/operator");
-            }
-            else {
-                router.push("/citizen");
-            }
+                }
+        catch (error) {
+            console.log("Login error:", error);
+            alert("Something went wrong. Please try again.");
         }
     }
     return (

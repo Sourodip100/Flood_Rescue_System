@@ -25,6 +25,7 @@ export async function POST(request) {
         else {
             return NextResponse.json({error: "Unauthorized role"}, {status: 404});
         }
+
         if (!user){
             return NextResponse.json({error: "User not found"}, {status: 404});
         }
@@ -39,6 +40,7 @@ export async function POST(request) {
         return res;
     }
     catch (error) {
+        console.error("LOGIN API ERROR:", error);
         return NextResponse.json({error: error + "Internal server error"}, {status: 500});
     }
 }

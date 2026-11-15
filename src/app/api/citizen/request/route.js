@@ -22,6 +22,7 @@ export async function POST(request) {
             data: {
                 name: body.name,
                 pin: body.pin,
+                phone: user.phone,
                 latitude: Number(body.latitude),
                 longitude: Number(body.longitude),
                 emergencyType: body.emergencyType,

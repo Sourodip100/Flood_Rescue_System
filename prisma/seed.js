@@ -1,4 +1,3 @@
-
 const { PrismaClient } = require("@prisma/client");
 const bcrypt = require("bcryptjs");
 
@@ -7,189 +6,151 @@ const prisma = new PrismaClient();
 async function main() {
     console.log("Starting database seeding...");
 
-    // 1. Create sample users
-    const passwordHash = await bcrypt.hash("Rescue@123", 10);
+    // Hash demo account passwords
+    const citizenPassword = await bcrypt.hash("Citizen@123", 10);
+    const rescuerPassword = await bcrypt.hash("Rescuer@123", 10);
+    const operatorPassword = await bcrypt.hash("Operator@123", 10);
 
+    // 1. Create Citizen
     const citizen = await prisma.user.upsert({
-        where: { email: "citizen@example.com" },
+        where: { email: "citizen@gmail.com" },
         update: {},
         create: {
             name: "Rahul Sharma",
-            email: "citizen@example.com",
-            passwordHash,
+            email: "citizen@gmail.com",
+            passwordHash: citizenPassword,
             phone: "9876543210",
-            role: "CITIZEN"
-        }
+        },
     });
 
-    const operator = await prisma.user.upsert({
-        where: { email: "operator@example.com" },
+    // 2. Create Operator
+    const operator = await prisma.operator.upsert({
+        where: { email: "operator@gmail.com" },
         update: {},
         create: {
-            name: "Rescue Operator",
-            email: "operator@example.com",
-            passwordHash,
-            phone: "9876543211",
-            role: "OPERATOR"
-        }
+            name: "Admin Operator",
+            email: "operator@gmail.com",
+            passwordHash: operatorPassword,
+            contactNumber: "9876543211",
+        },
     });
 
-    await prisma.user.upsert({
-        where: { email: "admin@example.com" },
+    // 3. Create Rescuer
+    const rescuer = await prisma.rescuer.upsert({
+        where: { email: "rescuer@gmail.com" },
         update: {},
         create: {
-            name: "System Admin",
-            email: "admin@example.com",
-            passwordHash,
-            phone: "9876543212",
-            role: "ADMIN"
-        }
+            name: "Rescue Team Alpha",
+            email: "rescuer@gmail.com",
+            passwordHash: rescuerPassword,
+            contactNumber: "9876543212",
+            membersCount: 5,
+            latitude: 31.2520,
+            longitude: 75.7050,
+            status: "AVAILABLE",
+        },
     });
 
-    // 2. Create a rescuer team
-    let rescuer = await prisma.rescuer.findFirst({
-        where: { contactNumber: "9876500001" }
-    });
+    // 4. Create Resources
+    const resourceCount = await prisma.resource.count();
 
-    if (!rescuer) {
-        rescuer = await prisma.rescuer.create({
-            data: {
-                name: "Team Alpha",
-                contactNumber: "9876500001",
-                membersCount: 5,
-                status: "AVAILABLE"
-            }
+    if (resourceCount === 0) {
+        await prisma.resource.createMany({
+            data: [
+                {
+                    name: "Rescue Boat Alpha",
+                    type: "BOAT",
+                    quantity: 5,
+                    available: 5,
+                    status: "AVAILABLE",
+                },
+                {
+                    name: "Emergency Ambulance",
+                    type: "AMBULANCE",
+                    quantity: 3,
+                    available: 3,
+                    status: "AVAILABLE",
+                },
+                {
+                    name: "Rescue Kits",
+                    type: "RESCUE_KIT",
+                    quantity: 50,
+                    available: 50,
+                    status: "AVAILABLE",
+                },
+                {
+                    name: "Food Supply Packages",
+                    type: "FOOD_SUPPLY",
+                    quantity: 100,
+                    available: 100,
+                    status: "AVAILABLE",
+                },
+                {
+                    name: "Medical Kits",
+                    type: "MEDICAL_KIT",
+                    quantity: 30,
+                    available: 30,
+                    status: "AVAILABLE",
+                },
+            ],
         });
     }
 
-    // 3. Create resources
-    const resourceData = [
-        {
-            name: "Rescue Boat 01",
-            type: "BOAT",
-            quantity: 5,
-            available: 5
-        },
-        {
-            name: "Ambulance 01",
-            type: "AMBULANCE",
-            quantity: 3,
-            available: 3
-        },
-        {
-            name: "Medical Kit",
-            type: "MEDICAL_KIT",
-            quantity: 20,
-            available: 20
-        },
-        {
-            name: "Rescue Kit",
-            type: "RESCUE_KIT",
-            quantity: 15,
-            available: 15
-        }
-    ];
-
-    for (const item of resourceData) {
-        const existing = await prisma.resource.findFirst({
-            where: { name: item.name }
-        });
-
-        if (!existing) {
-            await prisma.resource.create({
-                data: item
-            });
-        }
-    }
-
-    // 4. Create a pending rescue request
-    const pendingRequest = await prisma.rescueRequest.findFirst({
+    // 5. Create sample Rescue Requests
+    const request1 = await prisma.rescueRequest.findFirst({
         where: {
             citizenId: citizen.id,
-            description: "Flood water has entered our house."
-        }
+            description: "Water has entered our house. We need immediate rescue.",
+        },
     });
 
-    if (!pendingRequest) {
+    if (!request1) {
         await prisma.rescueRequest.create({
             data: {
-                name: citizen.name,
+                name: "Rahul Sharma",
                 pin: "144001",
                 latitude: 31.3260,
                 longitude: 75.5762,
-                emergencyType: ["FLOOD", "FOOD_SHORTAGE"],
+                emergencyType: ["FLOOD", "MEDICAL"],
                 peopleAffected: 4,
-                description: "Flood water has entered our house.",
-                urgency: "HIGH",
+                description: "Water has entered our house. We need immediate rescue.",
                 status: "PENDING",
-                citizenId: citizen.id
-            }
+                urgency: "CRITICAL",
+                citizenId: citizen.id,
+            },
         });
     }
 
-    // 5. Create an assigned rescue request
-    let assignedRequest = await prisma.rescueRequest.findFirst({
+    const request2 = await prisma.rescueRequest.findFirst({
         where: {
             citizenId: citizen.id,
-            description: "Two people are stranded on the rooftop."
-        }
+            description: "Our family is stranded on the first floor.",
+        },
     });
 
-    if (!assignedRequest) {
-        assignedRequest = await prisma.rescueRequest.create({
+    if (!request2) {
+        await prisma.rescueRequest.create({
             data: {
-                name: citizen.name,
-                pin: "144001",
-                latitude: 31.3280,
-                longitude: 75.5780,
-                emergencyType: ["FLOOD", "RESCUE"],
-                peopleAffected: 2,
-                description: "Two people are stranded on the rooftop.",
-                urgency: "CRITICAL",
-                status: "ASSIGNED",
+                name: "Rahul Sharma",
+                pin: "144002",
+                latitude: 31.3300,
+                longitude: 75.5800,
+                emergencyType: ["FLOOD"],
+                peopleAffected: 3,
+                description: "Our family is stranded on the first floor.",
+                status: "PENDING",
+                urgency: "HIGH",
                 citizenId: citizen.id,
-                rescuerId: rescuer.id
-            }
+            },
         });
-    }
-
-    // 6. Create a deployment record
-    const boat = await prisma.resource.findFirst({
-        where: { name: "Rescue Boat 01" }
-    });
-
-    const existingDeployment = await prisma.deployment.findFirst({
-        where: {
-            requestId: assignedRequest.id,
-            rescuerId: rescuer.id,
-            resourceId: boat.id
-        }
-    });
-
-    if (!existingDeployment && boat.available > 0) {
-        await prisma.$transaction([
-            prisma.deployment.create({
-                data: {
-                    requestId: assignedRequest.id,
-                    rescuerId: rescuer.id,
-                    resourceId: boat.id,
-                    assignedById: operator.id,
-                    quantityUsed: 1,
-                    notes: "Boat assigned for rooftop rescue."
-                }
-            }),
-
-            prisma.resource.update({
-                where: { id: boat.id },
-                data: {
-                    available: { decrement: 1 },
-                    status: "DEPLOYED"
-                }
-            })
-        ]);
     }
 
     console.log("Database seeding completed successfully!");
+    console.log("Created/verified:");
+    console.log("- Citizen:", citizen.email);
+    console.log("- Operator:", operator.email);
+    console.log("- Rescuer:", rescuer.email);
+    console.log("- Resources and sample rescue requests");
 }
 
 main()
