@@ -80,10 +80,21 @@ export default function Request() {
                 <input type="text" id="location" name="location" value={formData.latitude + ", " + formData.longitude} onChange={handleChange}/>
                 <br />
                 <label> <input type="checkbox" name="emergencyType" value="Flood Rescue" onChange={handleChange}/>Flood Rescue</label>
-                <label><input type="checkbox" name="emergencyType" value="Flooding" onChange={handleChange}/> Flooding</label>
+                <label><input type="checkbox" name="emergencyType" value="Emergency Evacuation" onChange={handleChange}/> Emergency Evacuation</label>
                 <label><input type="checkbox" name="emergencyType" value="Medical Emergency" onChange={handleChange}/> Medical Emergency</label>
-                <label><input type="checkbox" name="emergencyType" value="Food" onChange={handleChange} /> Food</label>
-                <label> <input type="checkbox" name="emergencyType" value="Shelter" onChange={handleChange} /> Shelter</label>
+                <label><input type="checkbox" name="emergencyType" value="Food" onChange={handleChange} /> Food Assistance </label>
+                <label> <input type="checkbox" name="emergencyType" value="Shelter Assistance" onChange={handleChange} /> Shelter Assistance </label>
+                <label> <input type="checkbox" name="emergencyType" value="Drinking Water Assistance" onChange={handleChange}/>Drinking Water Assistance</label>
+                <label><input type="checkbox" name="emergencyType" value="Missing Person" onChange={handleChange}/> Missing Person</label>
+                <label><input type="checkbox" name="emergencyType" value="Boat Rescue" onChange={handleChange}/> Boat Rescue</label>
+                <label><input type="checkbox" name="emergencyType" value="Baby & Child Assistance" onChange={handleChange} /> Baby & Child Assistance</label>
+                <label> <input type="checkbox" name="emergencyType" value="Sanitation & Hygiene Assistance" onChange={handleChange} /> Sanitation & Hygiene Assistance</label>
+                <label> <input type="checkbox" name="emergencyType" value="Clothing & Blanket Assistance" onChange={handleChange}/>Clothing & Blanket Assistance</label>
+                <label><input type="checkbox" name="emergencyType" value="Oxygen Assistance" onChange={handleChange}/> Oxygen Assistance</label>
+                <label><input type="checkbox" name="emergencyType" value="Electricity & Lighting Assistance" onChange={handleChange}/> Electricity & Lighting Assistance</label>
+                <label><input type="checkbox" name="emergencyType" value="Fuel Assistance" onChange={handleChange} /> Fuel Assistance</label>
+                <label> <input type="checkbox" name="emergencyType" value="Snake Or Poison" onChange={handleChange} /> Snake Or Poison </label>
+                <label> <input type="checkbox" name="emergencyType" value="Other" onChange={handleChange} /> Other</label>
                 <br />
                 <label>People Affected:</label>
                 <input type="number" id="peopleAffected" name="peopleAffected" onChange={handleChange} />

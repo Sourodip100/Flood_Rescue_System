@@ -30,6 +30,17 @@ enum ResourceType {
   RESCUE_KIT
   FOOD_SUPPLY
   MEDICAL_KIT
+  WATER_SUPPLY
+  LIFE_JACKET
+  BLANKET
+  CLOTHING
+  RESCUE_ROPE
+  OXYGEN_CYLINDER
+  BABY_SUPPLIES
+  SANITARY_KIT
+  FLASHLIGHT
+  BATTERY
+  FUEL
 }
 
 enum ResourceStatus {
@@ -113,6 +124,9 @@ model Rescuer {
   longitude     Float?
   status        TeamStatus @default(AVAILABLE)
 
+  boatCapacity Int  @default(0)
+  resources    Json @default("[]")
+
   // Relationships
   assignedRequests RescueRequest[] @relation("AssignedRescuer")
   deployments      Deployment[]
@@ -128,8 +142,6 @@ model Resource {
   available Int
   status    ResourceStatus @default(AVAILABLE)
 
-  deployments Deployment[]
-
   createdAt DateTime @default(now())
 }
 
@@ -139,17 +151,17 @@ model Deployment {
   // Foreign keys
   requestId    Int
   rescuerId    Int
-  resourceId   Int
   assignedById Int?
 
   // Relationships
   request    RescueRequest @relation(fields: [requestId], references: [id])
   rescuer    Rescuer       @relation(fields: [rescuerId], references: [id])
-  resource   Resource      @relation(fields: [resourceId], references: [id])
   assignedBy Operator?     @relation("AssignedBy", fields: [assignedById], references: [id])
 
-  quantityUsed Int       @default(1)
-  notes        String?
-  deployedAt   DateTime  @default(now())
-  completedAt  DateTime?
+  // Resources consumed during this rescue
+  resourcesUsed Json @default("[]")
+
+  notes       String?
+  deployedAt  DateTime  @default(now())
+  completedAt DateTime?
 }

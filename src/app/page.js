@@ -16,7 +16,7 @@ export default function Home() {
       <main className="p-4 flex flex-col sm:flex-row gap-4">
         <SlideBar array={[
           { url: "/dashboard", text: "Dashboard", state: {} },
-          { url: "/", text: "Mechanics Availavle", state: {} },
+          { url: "/", text: "Rescuer Availavle", state: {} },
           // { url: "/", text: "My Bookings", state: {} },
         ]} />
       </main>

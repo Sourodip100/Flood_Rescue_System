@@ -1,6 +1,8 @@
 "use client"
 import {useState} from "react";
 import { useRouter } from "next/navigation";
+import Header from "@/components/Header";
+
 export default function Register(){
     const router = useRouter();
     const [name, setName] = useState("");
@@ -24,7 +26,7 @@ export default function Register(){
         });
         const response = await request.json();
         if (response.error) {
-            console.error(response.error);
+            console.log(response.error);
             alert("Error: " + response.error);
         } else {
             console.log(response.message);
@@ -34,6 +36,11 @@ export default function Register(){
     }
     return (
         <>
+            <Header>
+                <div className='flex gap-2 mx-10'>
+                    <button className='bg-blue-500 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded' onClick={() => router.push("auth/login")}>Log Out</button>
+                </div>
+            </Header>
             <h1>Register</h1>
             <form onSubmit={formAction}>
                 <label htmlFor="name">Name:</label>

@@ -20,18 +20,14 @@ export async function POST(request) {
         if (!user){
             return NextResponse.json({error: "Could not Register User"}, {status: 404});
         }
-        const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
-        if (!isPasswordValid){
-            return NextResponse.json({error: "Password is invalid"}, {status: 401});
-        }
 
-        
         const res = NextResponse.json({message: "Register successful"});
-        setUser(user.id, res);
+        const role = "Citizen";
+        setUser(user.id, role, res);
         return res;
     }
-    catch (error) {
-        return NextResponse.json({error: "Internal server error"}, {status: 500});
+    catch (err) {
+        return NextResponse.json({error: err + "Internal server error"}, {status: 500});
     }
 }
 
