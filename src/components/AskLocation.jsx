@@ -17,7 +17,7 @@ export default function AskLocation({ callBack }) {
     }
     return (
         <div>
-            <button type="button" onClick={getLocation} className="bg-cyan-300">
+            <button type="button" onClick={getLocation} className="bg-green-500 hover:bg-green-700 text-white font-bold px-4 py-2 rounded">
                 Get Location
             </button>
         </div>

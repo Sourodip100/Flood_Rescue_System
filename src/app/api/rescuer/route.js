@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
+import {getUser} from "@/middlewares/jwtAuth";
 
 export async function GET (request) {
     try {

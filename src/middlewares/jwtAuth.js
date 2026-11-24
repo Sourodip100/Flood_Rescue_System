@@ -15,5 +15,5 @@ export function getUser(request){
 }
 export function setUser(userId, role, response){
     const token = jwt.sign({ userId, role }, process.env.JWT_SECRET, { expiresIn: "7d" });
-    response.cookies.set("token", token);
+    response.cookies.set("token", token, { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax", path: "/", maxAge: 60 * 60 * 24 * 7});
 }
