@@ -123,7 +123,7 @@ export default function Request() {
                                     required
                                     onChange={handleChange}
                                     placeholder="Enter your full name"
-                                    className="w-full border border-slate-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    className="w-full border border-slate-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
                                 />
                             </div>
 
@@ -137,7 +137,7 @@ export default function Request() {
                                     name="pin"
                                     onChange={handleChange}
                                     placeholder="Enter your PIN code"
-                                    className="w-full border border-slate-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full border border-slate-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                                 />
                             </div>
 
