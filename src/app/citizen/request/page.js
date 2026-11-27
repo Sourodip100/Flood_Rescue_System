@@ -208,7 +208,7 @@ export default function Request() {
                             <div>
                                 <label htmlFor="peopleAffected" className="block text-sm font-semibold text-slate-700 mb-2">
                                     Number of People Affected * </label>
-                                <input type="number" id="peopleAffected" name="peopleAffected" min="1" required onChange={handleChange} placeholder="Enter number of affected people" className="w-full border border-slate-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"/>
+                                <input type="number" id="peopleAffected" name="peopleAffected" min="1" required onChange={handleChange} placeholder="Enter number of affected people" className="w-full border border-slate-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"/>
                             </div>
                             <div>
                                 <label htmlFor="description" className="block text-sm font-semibold text-slate-700 mb-2">
@@ -221,7 +221,7 @@ export default function Request() {
                                     rows="4"
                                     onChange={handleChange}
                                     placeholder="Explain your current situation and the help you need..."
-                                    className="w-full border border-slate-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 resize-y"
+                                    className="w-full border border-slate-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 resize-y text-gray-900"
                                 />
                             </div>
                         </div>

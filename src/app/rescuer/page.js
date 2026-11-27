@@ -446,6 +446,7 @@ export default function RescuerDashboard() {
             setRescuer(profileData.rescuer);
 
             const assigned =
+                tasksData.tasks ||
                 tasksData.assignedRequests ||
                 tasksData.assigned ||
                 [];
@@ -457,7 +458,7 @@ export default function RescuerDashboard() {
 
             setAssignedTasks(assigned);
             setOngoingTasks(ongoing);
-
+            console.log("RESCUER TASKS API RESPONSE:", tasksData);
             if (profileData.rescuer?.latitude != null && profileData.rescuer?.longitude != null) {
                 setPosition({
                     latitude: profileData.rescuer.latitude,
